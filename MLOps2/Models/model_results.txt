@@ -1,0 +1,5 @@
+Model v1 - LogisticRegression (max_iter=100)
+Accuracy: 0.0
+
+Model v2 - LogisticRegression (max_iter=200, solver='liblinear')
+Accuracy: 0.0
