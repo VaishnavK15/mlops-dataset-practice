@@ -32,34 +32,71 @@ def evaluate(y_true, y_pred, name):
 evaluate(y_test, pred_v1, "Linear Regression")
 evaluate(y_test, pred_v2, "Random Forest Regressor")
 
-# from sklearn.datasets import load_iris
-# from sklearn.model_selection import train_test_split
-# from sklearn.linear_model import LogisticRegression
-# from sklearn.ensemble import RandomForestClassifier
-# from sklearn.metrics import accuracy_score
+--------For Iris Dataset-----------
+import matplotlib.pyplot as plt
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score
 
-# # Load dataset
-# data = load_iris()
-# X = data.data
-# y = data.target
+# Load dataset
+data = load_iris()
+X = data.data
+y = data.target
 
-# # Train-test split
-# X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+# Train-test split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-# # Model 1: Logistic Regression
-# model1 = LogisticRegression(max_iter=200)
-# model1.fit(X_train, y_train)
-# acc1 = accuracy_score(y_test, model1.predict(X_test))
+# Model 1: Logistic Regression
+model1 = LogisticRegression(max_iter=200)
+model1.fit(X_train, y_train)
+y_pred1 = model1.predict(X_test)
+acc1 = accuracy_score(y_test, y_pred1)
 
-# # Model 2: Random Forest Classifier
-# model2 = RandomForestClassifier(n_estimators=100)
-# model2.fit(X_train, y_train)
-# acc2 = accuracy_score(y_test, model2.predict(X_test))
+# Model 2: Random Forest Classifier
+model2 = RandomForestClassifier(n_estimators=100)
+model2.fit(X_train, y_train)
+y_pred2 = model2.predict(X_test)
+acc2 = accuracy_score(y_test, y_pred2)
 
-# print(f"Model 1 Accuracy: {acc1}")
-# print(f"Model 2 Accuracy: {acc2}")
+# Print results to console
+print(f"Model 1 Accuracy: {acc1}")
+print(f"Model 2 Accuracy: {acc2}")
 
+# Save results to text file
+with open("model_results.txt", "w") as file:
+    file.write(f"Model 1 Accuracy: {acc1}\n")
+    file.write(f"Model 2 Accuracy: {acc2}\n")
 
+# --- Visualization --- #
+
+# 1. Accuracy Comparison - Bar Plot
+models = ['Logistic Regression', 'Random Forest']
+accuracies = [acc1, acc2]
+
+plt.figure(figsize=(6, 4))
+plt.bar(models, accuracies, color=['blue', 'green'])
+plt.ylabel('Accuracy')
+plt.title('Model Accuracy Comparison')
+plt.ylim(0, 1)  # Accuracy range between 0 and 1
+plt.show()
+
+# 2. Prediction Comparison - Scatter Plot (for one feature)
+# We will use the first feature for simplicity (sepal length)
+plt.figure(figsize=(6, 4))
+
+plt.scatter(X_test[:, 0], y_test, color='blue', label='True Labels')
+plt.scatter(X_test[:, 0], y_pred1, color='red', label='Model 1 Predictions')
+plt.scatter(X_test[:, 0], y_pred2, color='green', label='Model 2 Predictions')
+
+plt.title('True Labels vs Predictions')
+plt.xlabel(data.feature_names[0])  # Sepal length
+plt.ylabel('Class Label')
+plt.legend()
+plt.show()
+
+----------Model Result---------
 import joblib
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 import os
