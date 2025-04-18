@@ -1,0 +1,94 @@
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+from sklearn.preprocessing import StandardScaler
+
+# Scale the features
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+
+# Train-test split
+X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=0.2, random_state=42)
+
+# Model v1: Linear Regression
+model_v1 = LinearRegression()
+model_v1.fit(X_train, y_train)
+pred_v1 = model_v1.predict(X_test)
+
+# Model v2: Random Forest Regressor
+model_v2 = RandomForestRegressor(n_estimators=100, random_state=42)
+model_v2.fit(X_train, y_train)
+pred_v2 = model_v2.predict(X_test)
+
+# Evaluation metrics
+def evaluate(y_true, y_pred, name):
+    print(f"\n{name}")
+    print(f"MAE: {mean_absolute_error(y_true, y_pred):.2f}")
+    print(f"MSE: {mean_squared_error(y_true, y_pred):.2f}")
+    print(f"RMSE: {mean_squared_error(y_true, y_pred, squared=False):.2f}")
+    print(f"R^2 Score: {r2_score(y_true, y_pred):.2f}")
+
+evaluate(y_test, pred_v1, "Linear Regression")
+evaluate(y_test, pred_v2, "Random Forest Regressor")
+
+# from sklearn.datasets import load_iris
+# from sklearn.model_selection import train_test_split
+# from sklearn.linear_model import LogisticRegression
+# from sklearn.ensemble import RandomForestClassifier
+# from sklearn.metrics import accuracy_score
+
+# # Load dataset
+# data = load_iris()
+# X = data.data
+# y = data.target
+
+# # Train-test split
+# X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# # Model 1: Logistic Regression
+# model1 = LogisticRegression(max_iter=200)
+# model1.fit(X_train, y_train)
+# acc1 = accuracy_score(y_test, model1.predict(X_test))
+
+# # Model 2: Random Forest Classifier
+# model2 = RandomForestClassifier(n_estimators=100)
+# model2.fit(X_train, y_train)
+# acc2 = accuracy_score(y_test, model2.predict(X_test))
+
+# print(f"Model 1 Accuracy: {acc1}")
+# print(f"Model 2 Accuracy: {acc2}")
+
+
+import joblib
+from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+import os
+
+# Ensure 'models' directory exists
+os.makedirs("models", exist_ok=True)
+
+# Save models
+joblib.dump(model_v1, "models/model_v1.pkl")
+joblib.dump(model_v2, "models/model_v2.pkl")
+
+# Prepare evaluation results
+def get_model_metrics(y_true, y_pred):
+    mae = mean_absolute_error(y_true, y_pred)
+    mse = mean_squared_error(y_true, y_pred)
+    rmse = mean_squared_error(y_true, y_pred, squared=False)
+    r2 = r2_score(y_true, y_pred)
+    return mae, mse, rmse, r2
+
+pred_v1 = model_v1.predict(X_test)
+pred_v2 = model_v2.predict(X_test)
+
+mae1, mse1, rmse1, r2_1 = get_model_metrics(y_test, pred_v1)
+mae2, mse2, rmse2, r2_2 = get_model_metrics(y_test, pred_v2)
+
+# Save results to a text file
+with open("models/model_results.txt", "w") as f:
+    f.write("Model v1: Linear Regression\n")
+    f.write(f"MAE: {mae1:.2f}\nMSE: {mse1:.2f}\nRMSE: {rmse1:.2f}\nR2 Score: {r2_1:.2f}\n\n")
+
+    f.write("Model v2: Random Forest Regressor\n")
+    f.write(f"MAE: {mae2:.2f}\nMSE: {mse2:.2f}\nRMSE: {rmse2:.2f}\nR2 Score: {r2_2:.2f}\n" )
